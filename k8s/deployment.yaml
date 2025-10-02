@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: counter-backend-deployment
+spec:
+  replicas: 1 #broj instanci 
+  selector:
+    matchLabels:
+      app: counter-backend
+  template:
+    metadata:
+      labels:
+        app: counter-backend
+    spec:
+      containers:
+      - name: fastapi-container
+        image: counter-backend:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+
