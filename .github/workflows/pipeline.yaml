@@ -18,10 +18,14 @@ jobs:
       run: |
         docker build -t vasilijed/counter-backend:${{ github.sha }} .
 
+    - name: Configure kubeconfig
+      run: |
+        echo "KUBECONFIG=$HOME/.kube/config" >> $GITHUB_ENV
+
     - name: Apply or restart deployment
       shell: cmd
       run: |
-        kubectl create namespace ${{ github.ref_name }} --dry-run=client -o yaml | kubectl apply -f --validate=false --insecure-skip-tls-verify=true
+        kubectl create namespace ${{ github.ref_name }} --dry-run=client -o yaml | kubectl apply -f - --validate=false --insecure-skip-tls-verify=true
         kubectl apply -f k8s/ -n ${{ github.ref_name }} --validate=false --insecure-skip-tls-verify=true
         kubectl rollout restart deployment/counter-backend-deployment -n ${{ github.ref_name }} --insecure-skip-tls-verify=true
 
