@@ -6,31 +6,20 @@ on:
 
 jobs:
   deploy-backend:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     timeout-minutes: 3
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Build and push to Docker Hub
+    - name: Build Docker image
       run: |
         docker build -t vasilijed/counter-backend:${{ github.sha }} .
-        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-        docker push vasilijed/counter-backend:${{ github.sha }}
 
-    - name: Set up K3D Kubernetes
+    - name: Restart backend deployment
       run: |
-        curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
-        k3d cluster create ci-cluster --agents 1
-        k3d kubeconfig get ci-cluster > $HOME/.kube/config
-
-    - name: Deploy backend to namespace
-      run: |
-        kubectl create namespace ${{ github.ref_name }} --dry-run=client -o yaml | kubectl apply -f -
-        kubectl apply -f k8s/ -n ${{ github.ref_name }}
-        kubectl set image deployment/counter-backend-deployment \
-          fastapi-container=vasilijed/counter-backend:${{ github.sha }} -n ${{ github.ref_name }}
+        kubectl rollout restart deployment/counter-backend-deployment -n ${{ github.ref_name }}
 
     - name: Verify deployment
       run: |
