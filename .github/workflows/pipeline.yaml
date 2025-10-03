@@ -26,9 +26,11 @@ jobs:
     - name: Apply or restart deployment
       shell: cmd
       run: |
+        set KUBECONFIG=%USERPROFILE%\.kube\config
         kubectl create namespace %GITHUB_REF_NAME% --dry-run=client -o yaml | kubectl apply -f - --validate=false --insecure-skip-tls-verify=true
         kubectl apply -f k8s/ -n %GITHUB_REF_NAME% --validate=false --insecure-skip-tls-verify=true
         kubectl rollout restart deployment/counter-backend-deployment -n %GITHUB_REF_NAME% --insecure-skip-tls-verify=true
+
 
     - name: Verify deployment
       shell: cmd
