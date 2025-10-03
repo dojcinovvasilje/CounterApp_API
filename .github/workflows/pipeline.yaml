@@ -2,35 +2,36 @@ name: Deploy Backend
 
 on:
   push:
-    branches: [dev, qa, uat, main]
+    branches: [dev, qa, uat, master]
 
 jobs:
   deploy-backend:
     runs-on: ubuntu-latest
+    timeout-minutes: 3
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Build Backend Docker image
+    - name: Build and push to Docker Hub
       run: |
-        docker build -t counter-backend:${{ github.sha }} .
+        docker build -t vasilijed/counter-backend:${{ github.sha }} .
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        docker push vasilijed/counter-backend:${{ github.sha }}
 
-    - name: Set up Minikube
-      uses: medyagh/setup-minikube@v1
-
-    - name: Load backend image to Minikube
+    - name: Set up K3D Kubernetes
       run: |
-        minikube image load counter-backend:${{ github.sha }}
+        curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+        k3d cluster create ci-cluster --agents 1
+        k3d kubeconfig get ci-cluster > $HOME/.kube/config
 
     - name: Deploy backend to namespace
       run: |
         kubectl create namespace ${{ github.ref_name }} --dry-run=client -o yaml | kubectl apply -f -
         kubectl apply -f k8s/ -n ${{ github.ref_name }}
         kubectl set image deployment/counter-backend-deployment \
-          backend-container=counter-backend:${{ github.sha }} -n ${{ github.ref_name }} || true
-        
-    - name: Verify backend deployment
+          fastapi-container=vasilijed/counter-backend:${{ github.sha }} -n ${{ github.ref_name }}
+
+    - name: Verify deployment
       run: |
-        kubectl rollout status deployment/counter-backend-deployment -n ${{ github.ref_name }} --timeout=300s
-        echo "Backend deployed to ${{ github.ref_name }} namespace"
+        kubectl rollout status deployment/counter-backend-deployment -n ${{ github.ref_name }} --timeout=120s
