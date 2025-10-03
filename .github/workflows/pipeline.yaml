@@ -14,13 +14,16 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Build Docker image
+      shell: cmd
       run: |
         docker build -t vasilijed/counter-backend:${{ github.sha }} .
 
     - name: Restart backend deployment
+      shell: cmd
       run: |
         kubectl rollout restart deployment/counter-backend-deployment -n ${{ github.ref_name }}
 
     - name: Verify deployment
+      shell: cmd
       run: |
         kubectl rollout status deployment/counter-backend-deployment -n ${{ github.ref_name }} --timeout=120s
