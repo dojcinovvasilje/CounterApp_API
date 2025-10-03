@@ -14,23 +14,23 @@ jobs:
       uses: actions/checkout@v4
 
     - name: Build and push to Docker Hub
-      shell: cmd
+      shell: powershell
       run: |
         docker build -t vasilijed/counter-backend:${{ github.sha }} .
-        echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
         docker push vasilijed/counter-backend:${{ github.sha }}
 
     - name: Use existing K3D cluster
-      shell: cmd
+      shell: powershell
       run: |
-        k3d kubeconfig get ci-cluster > %USERPROFILE%\.kube\config
+        k3d kubeconfig get ci-cluster > $env:USERPROFILE\.kube\config
 
     - name: Restart backend deployment
-      shell: cmd
+      shell: powershell
       run: |
         kubectl rollout restart deployment/counter-backend-deployment -n ${{ github.ref_name }}
 
     - name: Verify deployment
-      shell: cmd
+      shell: powershell
       run: |
         kubectl rollout status deployment/counter-backend-deployment -n ${{ github.ref_name }} --timeout=120s
