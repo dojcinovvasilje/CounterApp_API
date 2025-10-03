@@ -7,7 +7,7 @@ on:
 jobs:
   deploy-backend:
     runs-on: self-hosted
-    timeout-minutes: 4
+    timeout-minutes: 3
     
     steps:
     - name: Checkout code
@@ -18,21 +18,21 @@ jobs:
       run: |
         docker build -t vasilijed/counter-backend:${{ github.sha }} .
 
-    - name: Configure kubeconfig
+    - name: Set up K3D Kubernetes
       shell: cmd
       run: |
-        echo KUBECONFIG=%USERPROFILE%\.kube\config>> %GITHUB_ENV%
+        k3d cluster delete ci-cluster 2>nul
+        k3d cluster create ci-cluster --agents 1 --wait
+        k3d kubeconfig get ci-cluster > %USERPROFILE%\.kube\config
 
-    - name: Apply or restart deployment
+    - name: Deploy backend
       shell: cmd
       run: |
-        set KUBECONFIG=%USERPROFILE%\.kube\config
-        kubectl create namespace %GITHUB_REF_NAME% --dry-run=client -o yaml | kubectl apply -f - --validate=false --insecure-skip-tls-verify=true
-        kubectl apply -f k8s/ -n %GITHUB_REF_NAME% --validate=false --insecure-skip-tls-verify=true
-        kubectl rollout restart deployment/counter-backend-deployment -n %GITHUB_REF_NAME% --insecure-skip-tls-verify=true
-
+        kubectl create namespace ${{ github.ref_name }} --dry-run=client -o yaml | kubectl apply -f -
+        kubectl apply -f k8s/ -n ${{ github.ref_name }}
+        kubectl rollout restart deployment/counter-backend-deployment -n ${{ github.ref_name }}
 
     - name: Verify deployment
       shell: cmd
       run: |
-        kubectl rollout status deployment/counter-backend-deployment -n %GITHUB_REF_NAME% --timeout=120s
+        kubectl rollout status deployment/counter-backend-deployment -n ${{ github.ref_name }} --timeout=120s
