@@ -13,23 +13,21 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Build Docker image
+    - name: Build and push to Docker Hub
       shell: cmd
       run: |
         docker build -t vasilijed/counter-backend:${{ github.sha }} .
+        echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin
+        docker push vasilijed/counter-backend:${{ github.sha }}
 
-    - name: Set up K3D Kubernetes
+    - name: Use existing K3D cluster
       shell: cmd
       run: |
-        k3d cluster delete ci-cluster 2>nul
-        k3d cluster create ci-cluster --agents 1 --wait
         k3d kubeconfig get ci-cluster > %USERPROFILE%\.kube\config
 
-    - name: Deploy backend
+    - name: Restart backend deployment
       shell: cmd
       run: |
-        kubectl create namespace ${{ github.ref_name }} --dry-run=client -o yaml | kubectl apply -f -
-        kubectl apply -f k8s/ -n ${{ github.ref_name }}
         kubectl rollout restart deployment/counter-backend-deployment -n ${{ github.ref_name }}
 
     - name: Verify deployment
