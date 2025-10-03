@@ -14,8 +14,8 @@ spec:
     spec:
       containers:
       - name: fastapi-container
-        image: counter-backend:latest
-        imagePullPolicy: Never
+        image: vasilijed/counter-backend:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 8000
 
