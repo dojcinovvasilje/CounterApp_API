@@ -12,6 +12,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        path: task1/backend
+
+    - name: Change to backend directory
+      run: cd task1/backend
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
