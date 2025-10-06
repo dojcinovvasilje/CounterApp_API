@@ -31,16 +31,10 @@ jobs:
         docker push vasilijed/counter-backend:${{ github.sha }}
         docker push vasilijed/counter-backend:latest
 
-    # - name: Restart deployment
-    #   shell: cmd
-    #   run: |
-    #     k3d kubeconfig get ci-cluster > %USERPROFILE%\.kube\config
-    #     kubectl rollout restart deployment/counter-backend-deployment -n %GITHUB_REF_NAME%
-
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v2
 
     - name: Deploy with Terraform  
       run: |
         terraform init
-        terraform apply -auto-approve
+        terraform apply -auto-approve -input=false
