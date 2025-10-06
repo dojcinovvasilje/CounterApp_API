@@ -39,17 +39,13 @@ jobs:
         echo "Current directory:"
         pwd
         echo "Files in directory:"
-        ls -la
+        dir
         echo "Terraform version:"
         terraform version
         echo "Kubernetes nodes:"
         kubectl get nodes
         echo "Docker images:"
         docker images
-
-    - name: Debug - Docker login test
-      run: |
-        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Deploy with Terraform  
       run: |
