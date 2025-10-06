@@ -10,7 +10,7 @@ jobs:
     timeout-minutes: 3
     defaults:
       run:
-        working-directory: task1/backend
+        working-directory: task1\backend
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
