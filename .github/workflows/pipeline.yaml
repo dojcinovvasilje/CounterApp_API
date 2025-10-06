@@ -15,7 +15,8 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        repository: dojcinovvasilije/CounterApp_API
+        repository: dojcinovvasilje/CounterApp_API
+        
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
