@@ -44,7 +44,7 @@ jobs:
       run: |
         echo "Starting Terraform init..."
         terraform init
-        echo "Terraform init completed"
+        echo "Terraform init completed!"
         echo "Starting Terraform apply..."
         terraform apply -auto-approve
-        echo "Terraform apply completed"
+        echo "Terraform apply completed!"
