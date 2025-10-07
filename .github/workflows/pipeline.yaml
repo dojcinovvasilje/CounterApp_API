@@ -29,6 +29,7 @@ jobs:
       run: |
         docker build -t vasilijed/counter-backend:${{ github.sha }} .
         docker tag vasilijed/counter-backend:${{ github.sha }} vasilijed/counter-backend:latest
+      working-directory: task1/backend
 
     - name: Push Docker image
       shell: cmd
@@ -56,3 +57,4 @@ jobs:
       run: |
         terraform init
         terraform apply -auto-approve
+        working-directory: task1/backend
