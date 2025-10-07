@@ -43,11 +43,11 @@ jobs:
     - name: Init with Terraform  
       run: |
         echo "Starting Terraform init..."
-        terraform init
+        terraform init -no-color
         echo "Terraform init completed!"
 
     - name: Apply with Terraform  
       run: |
         echo "Starting Terraform apply..."
-        terraform apply -auto-approve
+        terraform apply -auto-approve -no-color
         echo "Terraform apply completed!"
