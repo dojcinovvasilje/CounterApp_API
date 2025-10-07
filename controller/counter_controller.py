@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-router = APIRouter(prefix="/counter", tags=["Counter"])
+router = APIRouter(prefix="/api/counter", tags=["Counter"])
 
 counter = 0
 
