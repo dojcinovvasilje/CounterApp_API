@@ -41,4 +41,8 @@ jobs:
 
     - name: Apply with Terraform  
       run: |
-        terraform apply -auto-approve -no-color
+        terraform apply -auto-approve -no-color -var="image_sha=${{ github.sha }}"
+
+    - name: Restart Deployment
+      run: |
+        kubectl rollout restart deployment/counter-backend-deployment -n master

@@ -19,9 +19,6 @@ resource "kubernetes_deployment" "backend_deployment_master" {
         labels = {
           app = "counter-backend"
         }
-        annotations = {
-          "image-sha" = "${var.image_sha}"
-        }
       }
       
       spec {
