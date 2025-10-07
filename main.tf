@@ -51,6 +51,6 @@ resource "kubernetes_service" "backend_service_master" {
       target_port = 8000
     }
     
-    type = "ClusterIP"
+    type = "NodePort"
   }
 }
