@@ -43,14 +43,12 @@ jobs:
         dir
 
     - name: Init with Terraform  
-      shell: cmd
       run: |
         echo "Starting Terraform init..."
         terraform init -no-color
         echo "Terraform init completed!"
 
     - name: Apply with Terraform  
-      shell: cmd
       run: |
         echo "Starting Terraform apply..."
         terraform apply -auto-approve -no-color
