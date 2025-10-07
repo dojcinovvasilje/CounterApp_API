@@ -35,21 +35,11 @@ jobs:
       with:
         terraform_wrapper: false
 
-    - name: Debug - Check environment
-      run: |
-        echo "Current directory:"
-        pwd
-        echo "Files in directory:"
-        dir
-
     - name: Init with Terraform  
       run: |
-        echo "Starting Terraform init..."
         terraform init -no-color
-        echo "Terraform init completed!"
 
     - name: Apply with Terraform  
       run: |
-        echo "Starting Terraform apply..."
         terraform apply -auto-approve -no-color
-        echo "Terraform apply completed!"
+        
