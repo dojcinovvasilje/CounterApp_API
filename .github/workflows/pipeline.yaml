@@ -40,11 +40,14 @@ jobs:
         echo "Files in directory:"
         dir
 
-    - name: Deploy with Terraform  
+    - name: Init with Terraform  
       run: |
         echo "Starting Terraform init..."
         terraform init
         echo "Terraform init completed!"
+
+    - name: Apply with Terraform  
+      run: |
         echo "Starting Terraform apply..."
         terraform apply -auto-approve
         echo "Terraform apply completed!"
