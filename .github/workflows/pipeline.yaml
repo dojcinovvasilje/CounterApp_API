@@ -8,15 +8,11 @@ jobs:
   deploy-backend:
     runs-on: self-hosted
     timeout-minutes: 3
-    defaults:
-      run:
-        working-directory: task1\backend
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
         repository: dojcinovvasilje/CounterApp_API
-        
 
     - name: Log in to Docker Hub
       uses: docker/login-action@v2
@@ -27,13 +23,14 @@ jobs:
     - name: Build Docker image
       shell: cmd
       run: |
+        cd C:\Users\vasilije.dojcinov\desktop\task1\backend
         docker build -t vasilijed/counter-backend:${{ github.sha }} .
         docker tag vasilijed/counter-backend:${{ github.sha }} vasilijed/counter-backend:latest
-      working-directory: task1/backend
 
     - name: Push Docker image
       shell: cmd
       run: |
+        cd C:\Users\vasilije.dojcinov\desktop\task1\backend
         docker push vasilijed/counter-backend:${{ github.sha }}
         docker push vasilijed/counter-backend:latest
 
@@ -46,15 +43,9 @@ jobs:
         pwd
         echo "Files in directory:"
         dir
-        echo "Terraform version:"
-        terraform version
-        echo "Kubernetes nodes:"
-        kubectl get nodes
-        echo "Docker images:"
-        docker images
 
     - name: Deploy with Terraform  
       run: |
+        cd C:\Users\vasilije.dojcinov\desktop\task1\backend
         terraform init
         terraform apply -auto-approve
-        working-directory: task1/backend
