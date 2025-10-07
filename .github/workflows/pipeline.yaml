@@ -41,7 +41,7 @@ jobs:
 
     - name: Apply with Terraform  
       run: |
-        terraform apply -auto-approve -no-color -var="image_sha=${{ github.sha }}"
+        terraform apply -auto-approve -no-color
 
     - name: Restart Deployment
       run: |
